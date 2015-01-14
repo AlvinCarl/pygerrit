@@ -169,6 +169,23 @@ class GerritRestAPI(object):
         response = self.session.delete(self.make_url(endpoint), **kwargs)
         return _decode_response(response)
 
+    def submit(self, change_id, revision):
+        """ Submit a review.
+
+        :arg str change_id: The change ID.
+        :arg str revision: The revision.
+
+        :returns:
+            JSON decoded result.
+
+        :raises:
+            requests.RequestException on timeout or connection error.
+
+        """
+
+        endpoint = "changes/%s/revisions/%s/submit" % (change_id, revision)
+        return self.post(endpoint, data=str('{"wait_for_merge": true}'))
+
     def review(self, change_id, revision, review):
         """ Submit a review.
 
@@ -185,7 +202,7 @@ class GerritRestAPI(object):
         """
 
         endpoint = "changes/%s/revisions/%s/review" % (change_id, revision)
-        self.post(endpoint, data=str(review))
+        return self.post(endpoint, data=str(review))
 
 
 class GerritReview(object):
